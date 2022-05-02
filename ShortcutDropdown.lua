@@ -18,19 +18,25 @@ function Dropdown:startText(StartText, Message, ignoreNextKey)
                 end
             end
             
-            local yOffset = 5
-            yOffset = math.min(yOffset, #self.sortedList)
-            yOffset = yOffset*20+20
-
             local h, w = self.handler.h, self.handler.w
+            
+            local max = 5
+            max = math.min(max, #self.sortedList)
+            local yOffset = max*20+20
+            love.graphics.setColor(self.handler.colors["BackgroundColor"])
+            love.graphics.rectangle("fill", 0, h-yOffset, w, yOffset)
 
-            for i = yOffset, 1, -1 do
+            for i = 1, max do
+                local fakeI = math.abs(i-(max+1))
                 if self.sortedList[i] then
                     love.graphics.setColor(self.sortedList[i][2] or self.handler.colors["GhostTextColor2"])
+                    if i == 1 then
+                        love.graphics.setColor(self.handler.colors["GhostTextColor2"][1]+0.3, self.handler.colors["GhostTextColor2"][2]+0.3, self.handler.colors["GhostTextColor2"][3]+0.3)
+                    end
                     if type(self.sortedList[i]) == "string" then
-                        love.graphics.printf(self.sortedList[i], 2, h-yOffset+i*20-18, w, "left")
+                        love.graphics.printf(self.sortedList[i], 2, h-yOffset+fakeI*20-18, w, "left")
                     else
-                        love.graphics.printf(self.sortedList[i][1], 2, h-yOffset+i*20-18, w, "left")
+                        love.graphics.printf(self.sortedList[i][1], 2, h-yOffset+fakeI*20-18, w, "left")
                     end
                 end
             end
