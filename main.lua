@@ -8,12 +8,12 @@ function love.textinput(t)
     SCM.textinput(t)
 end
 
-function love.draw(t)
-    SCM.draw(t)
+function love.draw()
+    SCM.draw()
 end
 
-function love.keypressed(t)
-    SCM.keypressed(t)
+function love.keypressed(key)
+    SCM.keypressed(key)
 end
 
 function love.quit()

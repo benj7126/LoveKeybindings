@@ -10,7 +10,7 @@ function MyKey:onActivate()
     if self.handler.lastKeybind then
         if MyKey ~= self.handler.lastKeybind then
             savedLast = self.handler.lastKeybind
-            self.handler.lastKeybind:onActivate(self.handler)
+            self.handler.lastKeybind:onActivate()
         end
     end
 end

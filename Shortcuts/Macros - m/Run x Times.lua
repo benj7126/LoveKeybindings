@@ -41,13 +41,12 @@ function MyKey:tryRunKeybind(keyCombo)
             if kurKeybind[Key].keybindings then
                 kurKeybind = kurKeybind[Key].keybindings
             else
-                kurKeybind = kurKeybind[Key]
+                if kurKeybind.onActivate then
+                    kurKeybind:onActivate()
+                    kurKeybind = self.handler.keybindings
+                end
             end
         end
-    end
-    
-    if kurKeybind.onActivate then
-        kurKeybind:onActivate()
     end
 end
 

@@ -56,10 +56,10 @@ function module.passKeyToKeybinds(key)
             if module.curKeybind[key].key ~= nil then
                 local activeKeybind = module.curKeybind[key]
                 module.curKeybind = nil
-                activeKeybind:onActivate(module)
-                module.lastKeybind = activeKeybind
+                activeKeybind:onActivate()
+                module.lastKeybind = activeKeybind:onActivate()
                 if activeKeybind.postOnActivate ~= nil then
-                    activeKeybind:postOnActivate(module)
+                    activeKeybind:postOnActivate()
                 end
             else
                 module.curKeybind = module.curKeybind[key].keybindings
@@ -248,6 +248,21 @@ function cutDown(string, len)
 end
 
 function module.load()
+    module.loadKeybinds()
+    SetupKeys(module.keybindings)
+end
+
+function SetupKeys(keybindings)
+    for _, v in pairs(keybindings) do
+        if v.setup then
+            v:setup()
+        elseif v.keybindings then
+            SetupKeys(v.keybindings)
+        end
+    end
+end
+
+function module.loadKeybinds()
     local path = love.filesystem.getWorkingDirectory().."/Shortcuts"
     module.keybindings = module.getKeysFromDir(path)
 

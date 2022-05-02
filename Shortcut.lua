@@ -7,6 +7,10 @@ function Shortcut:new()
     return Shortcut
 end
 
+function Shortcut:setup()
+    
+end
+
 function Shortcut:onActivate()
     
 end
