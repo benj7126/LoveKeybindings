@@ -4,6 +4,7 @@ local module = {}
 module.w, module.h = love.graphics.getWidth(), love.graphics.getHeight()
 
 module.keybindings = {}
+module.lastKeybindings = {}
 module.curKeybind = nil
 
 module.lastKeybind = nil
@@ -13,14 +14,7 @@ module.writingTo = nil
 module.keybindTxt = ""
 module.displayTxt = ""
 
-module.colors = {
-    ["BackgroundColor"] = {0.2, 0.2, 0.2},
-    ["TextColor"] = {1, 1, 1},
-    ["FolderColor"] = {0.6, 0.8, 0.9},
-    ["KeybindColor"] = {0.7, 0.2, 0.7},
-    ["GhostTextColor1"] = {0.6, 0.6, 0.6},
-    ["GhostTextColor2"] = {0.6, 0.6, 0.6},
-}
+module.colors = {}
 
 local keybindingWidth = math.floor(module.w/200)
 
@@ -57,12 +51,13 @@ function module.passKeyToKeybinds(key)
                 local activeKeybind = module.curKeybind[key]
                 module.curKeybind = nil
                 activeKeybind:onActivate()
-                module.lastKeybind = activeKeybind:onActivate()
+                module.lastKeybind = activeKeybind
                 if activeKeybind.postOnActivate ~= nil then
                     activeKeybind:postOnActivate()
                 end
             else
                 module.curKeybind = module.curKeybind[key].keybindings
+                module.lastKeybindings = module.curKeybind
             end
         end
     end
@@ -72,6 +67,13 @@ function module.passKeyToOpenKeybinds(key)
     if key == "space" and love.keyboard.isDown("lshift") or key == "lshift" and love.keyboard.isDown("space") then
         if module.curKeybind == nil then
             module.curKeybind = module.keybindings
+        else
+            module.curKeybind = nil
+        end
+    end
+    if key == "space" and love.keyboard.isDown("lctrl") or key == "lctrl" and love.keyboard.isDown("space") then
+        if module.curKeybind == nil then
+            module.curKeybind = module.lastKeybindings
         else
             module.curKeybind = nil
         end
@@ -292,8 +294,8 @@ function module.getKeysFromDir(path)
             keybind.handler = module
             keybindings[keybind.key] = keybind
         else
-            local key = string.sub(file, #file, #file)
-            local name = string.sub(file, 0, #file-4)
+            local key = string.match(file, " %- (.*)")
+            local name = string.match(file, "(.-) %- ")
             keybindings[key] = {name = name, keybindings = module.getKeysFromDir(path.."/"..file)}
         end
     end
@@ -323,6 +325,63 @@ end
 function module.script_path()
     local str = debug.getinfo(2, "S").source:sub(2)
     return str:match("(.*/)")
+end
+
+-- joink love2d main loop
+love.run = function()
+    if love.load then love.load(love.arg.parseGameArguments(arg), arg) end
+    module.load()
+
+    -- We don't want the first frame's dt to include time taken by love.load.
+    if love.timer then love.timer.step() end
+
+    local dt = 0
+
+    -- Main loop time.
+    return function()
+        -- Process events.
+        if love.event then
+            love.event.pump()
+            for name, a,b,c,d,e,f in love.event.poll() do
+                if name == "quit" then
+                    if not love.quit or not love.quit() then
+                        module.savePref()
+                        return a or 0
+                    end
+                elseif name == "textinput" then
+                    if not module.curKeybind and module.writingTo == nil then
+                        love.handlers[name](a,b,c,d,e,f)
+                    end
+                    module.textinput(a)
+                elseif name == "keypressed" then
+                    if not module.curKeybind and module.writingTo == nil then
+                        love.handlers[name](a,b,c,d,e,f)
+                    end
+                    module.keypressed(a)
+                else
+                    love.handlers[name](a,b,c,d,e,f)
+                end
+            end
+        end
+
+        -- Update dt, as we'll be passing it to update
+        if love.timer then dt = love.timer.step() end
+
+        -- Call update and draw
+        if love.update then love.update(dt) end -- will pass 0 if love.timer is disabled
+
+        if love.graphics and love.graphics.isActive() then
+            love.graphics.origin()
+            love.graphics.clear(love.graphics.getBackgroundColor())
+
+            module.draw()
+            if love.draw then love.draw() end
+
+            love.graphics.present()
+        end
+
+        if love.timer then love.timer.sleep(0.001) end
+    end
 end
 
 return module
