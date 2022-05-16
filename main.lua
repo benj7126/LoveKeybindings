@@ -1,1 +1,0 @@
-local SCM = require "ShortcutHandler"
