@@ -1,5 +1,5 @@
 local json = require "LoveKeybindings.dkjson"
-local s = require "Shortcut"
+local s = require "LoveKeybindings.Shortcut"
 
 local MyKey = s:new()
 

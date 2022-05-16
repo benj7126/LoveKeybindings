@@ -1,4 +1,4 @@
-local s = require "ShortcutMultiChoice"
+local s = require "LoveKeybindings.ShortcutMultiChoice"
 
 local MyKey = s:new()
 

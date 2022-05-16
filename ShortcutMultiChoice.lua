@@ -1,4 +1,4 @@
-local s = require "Shortcut"
+local s = require "LoveKeybindings.Shortcut"
 local MultiChoice = s:new()
 
 MultiChoice.dicToPass = {}

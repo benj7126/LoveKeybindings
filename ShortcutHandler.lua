@@ -271,7 +271,7 @@ function SetupKeys(keybindings)
 end
 
 function module.loadKeybinds()
-    local path = love.filesystem.getWorkingDirectory().."LoveKeybindings/Shortcuts"
+    local path = love.filesystem.getWorkingDirectory().."/LoveKeybindings/Shortcuts"
     module.keybindings = module.getKeysFromDir(path)
 
     module.loadPref()

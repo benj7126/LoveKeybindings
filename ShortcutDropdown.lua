@@ -1,4 +1,4 @@
-local s = require "Shortcut"
+local s = require "LoveKeybindings.Shortcut"
 local Dropdown = s:new()
 
 Dropdown.listToPass = {}
