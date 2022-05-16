@@ -1,4 +1,4 @@
-local json = require "dkjson"
+local json = require "LoveKeybindings.dkjson"
 local s = require "ShortcutMultiChoice"
 
 local MyKey = s:new()

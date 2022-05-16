@@ -1,4 +1,4 @@
-local json = require "dkjson"
+local json = require "LoveKeybindings.dkjson"
 
 local module = {}
 module.w, module.h = love.graphics.getWidth(), love.graphics.getHeight()
@@ -271,7 +271,7 @@ function SetupKeys(keybindings)
 end
 
 function module.loadKeybinds()
-    local path = love.filesystem.getWorkingDirectory().."/Shortcuts"
+    local path = love.filesystem.getWorkingDirectory().."LoveKeybindings/Shortcuts"
     module.keybindings = module.getKeysFromDir(path)
 
     module.loadPref()
