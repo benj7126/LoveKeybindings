@@ -9,6 +9,7 @@ MyKey.dicToPass = {}
 
 local defaultColors = {
     ["BackgroundColor"] = {0.2, 0.2, 0.2},
+    ["BorderColor"] = {0.05, 0.05, 0.05},
     ["TextColor"] = {1, 1, 1},
     ["FolderColor"] = {0.6, 0.8, 0.9},
     ["KeybindColor"] = {0.7, 0.2, 0.7},
@@ -42,6 +43,7 @@ function MyKey:genDic()
 end
 
 function MyKey:loadString(v)
+    print("a")
     local decoded = json.decode(v)
     colors = decoded[1]
     selected = decoded[2]
@@ -57,10 +59,8 @@ function MyKey:loadString(v)
     self.handler.colors = colors[selected]
 end
 
-
-
 function MyKey:saveString()
-    if #colors == 0 then
+    if not colors[selected] then
         colors[selected] = defaultColors
     end
     return json.encode({colors, selected})

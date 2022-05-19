@@ -55,12 +55,18 @@ function module.passKeyToKeybinds(key)
                 if activeKeybind.postOnActivate ~= nil then
                     activeKeybind:postOnActivate()
                 end
+
+                if module.curKeybind ~= nil then
+                    module.lastKeybindings = module.curKeybind
+                end
             else
                 module.curKeybind = module.curKeybind[key].keybindings
                 module.lastKeybindings = module.curKeybind
             end
+            return true
         end
     end
+    return false
 end
 
 function module.passKeyToOpenKeybinds(key)
@@ -85,6 +91,8 @@ end
 
 function module.savePref()
     local jsonStr = json.encode(getStringsFromKeybindings(module.keybindings))
+
+    print(jsonStr)
 
     local f = io.open("SC.conf", "w")
     f:write(jsonStr)
@@ -327,8 +335,10 @@ function module.script_path()
     return str:match("(.*/)")
 end
 
+print("a")
 -- joink love2d main loop
 love.run = function()
+    print("b")
     if love.load then love.load(love.arg.parseGameArguments(arg), arg) end
     module.load()
 
@@ -344,8 +354,9 @@ love.run = function()
             love.event.pump()
             for name, a,b,c,d,e,f in love.event.poll() do
                 if name == "quit" then
+                    module.savePref()
+                    print("abcde")
                     if not love.quit or not love.quit() then
-                        module.savePref()
                         return a or 0
                     end
                 elseif name == "textinput" then
@@ -374,8 +385,9 @@ love.run = function()
             love.graphics.origin()
             love.graphics.clear(love.graphics.getBackgroundColor())
 
-            module.draw()
             if love.draw then love.draw() end
+            love.graphics.origin()
+            module.draw()
 
             love.graphics.present()
         end

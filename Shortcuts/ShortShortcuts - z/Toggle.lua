@@ -18,12 +18,12 @@ end
 function MyKey:setup()
     local func = self.handler.keypressed
     self.handler.keypressed = function (key)
-        func(key)
         if isToggled and self.handler.curKeybind == nil and self.handler.writingTo == nil then
             if cuts[key] then
                 self:tryRunKeybind(cuts[key])
             end
         end
+        func(key)
     end
 end
 

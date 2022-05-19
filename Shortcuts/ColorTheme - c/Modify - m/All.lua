@@ -22,14 +22,21 @@ function MyKey:toString(color)
 end
 
 function MyKey:onGetResult(obj)
-    if palletToModify == "" then
+    print(obj[1], obj[2], obj[3], "k")
+    for a, b in pairs(obj) do
+        print(a, b)
+    end
+    if palletToModify == "" and not obj[3] then
         palletToModify = obj[2]
     
         self:genDic2()
         self:overrideDic(self.dicToPass, self.handler)
-    elseif colorToModify == "" then
+    elseif obj[3] ~= "" then
         local colors, selected = self.handler.keybindings["c"].keybindings["s"]:getRelevant()
+        palletToModify = obj[3]
         colorToModify = obj[2]
+
+        print(palletToModify, colorToModify)
 
         self:startText(self:toString(colors[palletToModify][colorToModify]), "What color should it be?", true)
     end
@@ -39,7 +46,7 @@ function MyKey:onReciveText(text)
     local colorsToModify, selected = self.handler.keybindings["c"].keybindings["s"]:getRelevant()
     local colors = self:getColors(text)
 
-    if #colors == 3 then
+    if colors then
         if colors[1] and colors[2] and colors[3] then
             colorsToModify[palletToModify][colorToModify] = {colors[1], colors[2], colors[3]}
             return
@@ -76,7 +83,7 @@ function MyKey:genDic2()
             keys[actualKey] = 1
         end
         actualKey = actualKey..keys[actualKey]
-        table.insert(self.dicToPass, {actualKey, key})
+        table.insert(self.dicToPass, {actualKey, key, palletToModify})
     end
 end
 
